@@ -30,7 +30,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -41,7 +41,22 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $title = $request->input('title');
+        $content = $request->input('content');
+
+        $posts = Storage::get('posts.txt');
+        $posts = explode("\n", $posts);
+
+        $new_post = [
+            count($posts) + 1,
+            $title,
+            $content,
+            date('Y-m-d H:i:s')
+        ];
+        $new_post = implode(',', $new_post);
+
+        array_push($posts, $new_post);
+        dd($posts);
     }
 
     /**
@@ -52,7 +67,20 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        return view('posts.show');
+        $posts = Storage::get('posts.txt');
+        $posts = explode("\n", $posts);
+        $selected_post = Array();
+        foreach ($posts as $post ) {
+            $post = explode(",", $post);
+            if($post[0] == $id){
+                $selected_post = $post;
+            }
+        }
+
+        $view_data = [
+            'post' => $selected_post
+        ];
+        return view('posts.show', $view_data);
     }
 
     /**
