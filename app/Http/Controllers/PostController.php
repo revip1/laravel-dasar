@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+
 
 class PostController extends Controller
 {
@@ -14,10 +17,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Storage::get('posts.txt');
-        $posts = explode("\n", $posts);
+        $posts = Post::active()->withTrashed()->get();
         $view_data = [
-            'posts' => $posts
+            'posts' => $posts,
         ];
 
         return view('posts.index', $view_data);
@@ -44,19 +46,12 @@ class PostController extends Controller
         $title = $request->input('title');
         $content = $request->input('content');
 
-        $posts = Storage::get('posts.txt');
-        $posts = explode("\n", $posts);
+        Post::create([
+            'title' => $title,
+            'content' => $content,
+        ]);
 
-        $new_post = [
-            count($posts) + 1,
-            $title,
-            $content,
-            date('Y-m-d H:i:s')
-        ];
-        $new_post = implode(',', $new_post);
-
-        array_push($posts, $new_post);
-        dd($posts);
+        return redirect('posts');
     }
 
     /**
@@ -67,18 +62,14 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $posts = Storage::get('posts.txt');
-        $posts = explode("\n", $posts);
-        $selected_post = Array();
-        foreach ($posts as $post ) {
-            $post = explode(",", $post);
-            if($post[0] == $id){
-                $selected_post = $post;
-            }
-        }
+        $post = Post::where('id', $id)->first();
+        $comments = $post->comments()->get();
+        $total_comments = $post->total_comments();
 
         $view_data = [
-            'post' => $selected_post
+            'post' => $post,
+            'comments' => $comments,
+            'total_comments' => $total_comments
         ];
         return view('posts.show', $view_data);
     }
@@ -91,7 +82,11 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::where('id', $id)->first();
+        $view_data = [
+            'post' => $post
+        ];
+        return view('posts.edit', $view_data);
     }
 
     /**
@@ -103,7 +98,17 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $title = $request->input('title');
+        $content = $request->input('content');
+
+        Post::where('id', $id)
+            ->update([
+                'title' => $title,
+                'content' => $content,
+                'updated_at' => date('Y-m-d H:i:s')
+        ]);
+
+        return redirect("posts/{$id}");
     }
 
     /**
@@ -114,6 +119,9 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Post::where('id', $id)
+            ->delete();
+
+        return redirect('posts');
     }
 }
