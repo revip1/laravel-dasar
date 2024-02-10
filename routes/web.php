@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HelloController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\AuthController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,6 +23,14 @@ Route::get('/', function () {
 // Route::get('hello', [HelloController::class, 'index']);
 // Route::any('world', [HelloController::class, 'world_message']);
 
+// Auth Route
+Route::get('login', [AuthController::class, 'login']);
+Route::post('login', [AuthController::class, 'auth']);
+Route::get('logout', [AuthController::class, 'logout']);
+Route::get('register', [AuthController::class, 'register_form']);
+Route::post('register', [AuthController::class, 'register']);
+
+// Posts Route
 Route::get('posts', [PostController::class, 'index']);
 Route::get('posts/create', [PostController::class, 'create']);
 Route::post('posts', [PostController::class, 'store']);

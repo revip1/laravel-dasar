@@ -1,16 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    {{-- css bootstrap --}}
-    <link href="{{ asset('bootstrap-5/css/bootstrap.min.css') }}" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    {{-- js bootstrap --}}
-    <script src="{{  asset('bootstrap-5/js/bootstrap.min.js') }}" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-    <title>Blog | Create Posts</title>
-</head>
-<body>
+@extends('layouts.app')
+@section('title', 'New Post')
+
+@section('content')
     <h1>Create New Posts</h1>
     <form method="post" action="{{ url('posts') }}" class="form-control">
         @csrf
@@ -24,5 +15,4 @@
           </div>
           <button type="submit" class="btn btn-primary">Simpan</button>
     </form>
-</body>
-</html>
+    @endsection
